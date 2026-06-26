@@ -24,6 +24,10 @@ Use this skill when worktree changes are mixed and the user wants commits separa
 
 - Run `git status -sb`, `git diff --stat`, `git branch --show-current`, and `git remote -v`.
 - If push may be required, run `git status --porcelain=v2 --branch`.
+- Before staging or committing for a publish request, verify that a push target
+  exists: `git remote get-url origin` and `git ls-remote origin` must succeed.
+  If the remote is missing, inaccessible, or auth is unavailable, stop before
+  staging or committing and report the concrete blocker.
 - If worktree is clean, stop and report there is nothing to publish.
 
 2. Load repository guidance before grouping.
@@ -71,7 +75,7 @@ Use this skill when worktree changes are mixed and the user wants commits separa
 - Do not silently include unrelated files.
 - Do not rewrite/discard user changes.
 - Do not amend/squash/reorder existing commits unless requested.
-- Stop and report concrete blocker when remote/auth is missing.
+- Stop before staging or committing when remote/auth is missing or inaccessible.
 
 ## Output
 

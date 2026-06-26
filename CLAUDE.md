@@ -10,6 +10,8 @@ When the user asks to split commits and publish, follow this procedure strictly.
 - `git branch --show-current`
 - `git remote -v`
 - if publish may happen: `git status --porcelain=v2 --branch`
+- before staging/committing for publish: verify `git remote get-url origin`
+  and `git ls-remote origin`; stop first if remote/auth is missing
 
 2. Read repository constraints.
 - read `AGENTS.md` (if present)
@@ -31,6 +33,8 @@ When the user asks to split commits and publish, follow this procedure strictly.
 - run minimal relevant validation
 - push each commit in order
 - if no upstream: `git push -u origin $(git branch --show-current)`
+- never create a local commit for a publish request after remote/auth has
+  already failed; report the blocker instead
 
 6. PR handling.
 - do not auto-create PR
@@ -41,7 +45,8 @@ When the user asks to split commits and publish, follow this procedure strictly.
 - do not include unrelated changes silently
 - do not discard or rewrite unstaged work
 - do not amend/squash/reorder commits unless asked
-- report blockers (missing remote/auth) with concrete next action
+- report blockers (missing remote/auth) with concrete next action before staging
+  or committing
 
 ## Response Format
 

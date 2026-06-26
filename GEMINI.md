@@ -10,6 +10,8 @@ When the user asks to split commits and publish, follow this procedure strictly.
    - `git branch --show-current`
    - `git remote -v`
    - If publish may happen: `git status --porcelain=v2 --branch`
+   - Before staging or committing for publish, verify `git remote get-url origin`
+     and `git ls-remote origin`; if either fails, stop with a concrete blocker.
    - If worktree is clean, stop and report there is nothing to publish.
 
 2. **Load repository guidance before grouping.**
@@ -35,6 +37,8 @@ When the user asks to split commits and publish, follow this procedure strictly.
    - Push each commit in order:
      - If no upstream: `git push -u origin $(git branch --show-current)`
      - Else: `git push`
+   - Do not create a local commit for a publish request after discovering that
+     the remote is missing, inaccessible, or unauthenticated.
 
 6. **Open draft PR only when explicitly requested.**
    - Do not open PR automatically.
@@ -46,7 +50,8 @@ When the user asks to split commits and publish, follow this procedure strictly.
 - Do not silently include unrelated files.
 - Do not rewrite or discard user changes.
 - Do not amend, squash, or reorder existing commits unless requested.
-- Stop and report concrete blockers (e.g., missing remote or auth) with clear next steps.
+- Stop before staging or committing and report concrete blockers (e.g., missing
+  remote or auth) with clear next steps.
 
 ## Output Format
 
