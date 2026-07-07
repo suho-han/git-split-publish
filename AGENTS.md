@@ -78,12 +78,17 @@ The skill runs on calibrated autonomy rather than blanket confirmation:
 5. Commit and push one group at a time — finish the whole loop:
    - verify staged scope with `git diff --cached --stat`
    - use `git diff --cached` when the stat is not enough
-   - run minimal relevant validation before the first push and gate the push on
-     it: if the change breaks validation, stop and report the actual output;
-     distinguish validation that cannot run (missing deps/broken harness —
-     caveat, fall back to build/typecheck/syntax) from validation the change
-     breaks (blocker); do not stage artifacts validation creates (`__pycache__/`,
-     `.pytest_cache/`, `node_modules/`, build caches)
+   - validate before pushing and gate the push on the result: if the change
+     breaks validation, stop and report the actual output. A single validation
+     before the first push only smoke-tests the combined worktree (later groups
+     are still present as uncommitted work), so it does not prove any one commit
+     builds on its own; when history must stay bisectable and commits are
+     interdependent, validate the at-risk commit in isolation before pushing it
+     (build its committed tree via `git archive <commit>`, or `git stash -u` the
+     later groups). Distinguish validation that cannot run (missing deps/broken
+     harness — caveat, fall back to build/typecheck/syntax) from validation the
+     change breaks (blocker); do not stage artifacts validation creates
+     (`__pycache__/`, `.pytest_cache/`, `node_modules/`, build caches)
    - push in order; if no upstream, use `git push -u origin $(git branch --show-current)`
    - retry transient network failures up to 4 times with exponential backoff
      (2s, 4s, 8s, 16s); auth/permission failures are blockers, not retries
@@ -104,6 +109,9 @@ The skill runs on calibrated autonomy rather than blanket confirmation:
 - Keep generated artifacts separate unless repo policy requires coupling.
 - Keep history bisectable: each commit should build/pass on its own, and shared
   new symbols belong in a foundational commit ordered before their dependents.
+  Ordering enforces this — a worktree-level check does not, since later groups
+  are still present; validate a commit in isolation (`git archive <commit>` or
+  `git stash -u` the later groups) when the guarantee must hold.
 - When a single file's hunks span groups, split with `git add -p`/`git add -e`,
   or commit once under the dominant intent and disclose the rider.
 - Never fold in secrets, env files, dependency/build/cache artifacts, or large

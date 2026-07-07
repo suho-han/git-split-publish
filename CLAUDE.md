@@ -49,9 +49,15 @@ When the user asks to split commits and publish, follow this procedure. Operatin
 5. Commit and push one group at a time — finish the whole loop.
 - verify staged diff (`git diff --cached --stat`)
 - commit with concise message
-- run minimal relevant validation before the first push and gate the push on it:
-  if the change breaks validation, stop before pushing and report the actual
-  output — never push or claim success on failed/unverified work
+- validate before pushing and gate the push on the result: if the change breaks
+  validation, stop before pushing and report the actual output — never push or
+  claim success on failed/unverified work
+- a single validation before the first push only smoke-tests the combined
+  worktree (later groups are still present as uncommitted work), so it does not
+  prove any one commit builds on its own; when history must stay bisectable and
+  commits are interdependent, validate the at-risk commit in isolation before
+  pushing it — build its committed tree (`git archive <commit>` into a temp dir)
+  or park the later groups (`git stash -u`) so the check sees only that commit
 - distinguish validation that can't run (missing deps, broken harness/config —
   report as a caveat, fall back to the cheapest sound check like
   build/typecheck/syntax) from validation the change breaks (a blocker)

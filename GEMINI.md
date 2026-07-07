@@ -52,14 +52,21 @@ When the user asks to split commits and publish, follow this procedure. These in
    - Stage each group's exact paths only.
    - Verify staged scope using `git diff --cached --stat`.
    - Commit with a terse, task-level message.
-   - Run minimal relevant validation (e.g., lint/test) before the first push and
-     gate the push on it: if the change breaks validation, stop before pushing
-     and report the actual output — never push or claim success on failed or
-     unverified work. Distinguish validation that cannot run (missing deps,
-     broken harness/config — report as a caveat and fall back to the cheapest
-     sound check such as build/typecheck/syntax) from validation the change
-     breaks (a blocker). Do not stage artifacts validation creates
-     (`__pycache__/`, `.pytest_cache/`, `node_modules/`, build caches).
+   - Validate (e.g., lint/test) before pushing and gate the push on the result:
+     if the change breaks validation, stop before pushing and report the actual
+     output — never push or claim success on failed or unverified work.
+   - A single validation before the first push only smoke-tests the combined
+     worktree; later groups are still present as uncommitted work, so it does
+     not prove any one commit builds on its own. When history must stay
+     bisectable and commits are interdependent, validate the at-risk commit in
+     isolation before pushing it — build its committed tree (`git archive
+     <commit>` into a temp dir) or park the later groups (`git stash -u`) so the
+     check sees only that commit's content.
+   - Distinguish validation that cannot run (missing deps, broken harness/config
+     — report as a caveat and fall back to the cheapest sound check such as
+     build/typecheck/syntax) from validation the change breaks (a blocker). Do
+     not stage artifacts validation creates (`__pycache__/`, `.pytest_cache/`,
+     `node_modules/`, build caches).
    - Push each commit in order:
      - If no upstream: `git push -u origin $(git branch --show-current)`
      - Else: `git push`

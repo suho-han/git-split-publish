@@ -23,6 +23,11 @@ Use these rules when a worktree contains multiple logical tasks.
 - When several changes share a new symbol or helper, give that shared code its
   own foundational commit ordered first (or fold it into the earliest change
   that needs it) so no commit references something a later commit introduces.
+- Ordering is what makes this hold; a worktree-level check does not prove it,
+  because later groups are still present when it runs. When it must be
+  guaranteed, validate the commit in isolation before pushing — build its
+  committed tree (`git archive <commit>` into a temp dir) or `git stash -u` the
+  later groups so the check sees only that commit.
 
 7. Split a file whose hunks span groups.
 - One file can carry changes for two intents (for example a manifest that adds a
