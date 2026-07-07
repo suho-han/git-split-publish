@@ -17,5 +17,11 @@ Use these rules when a worktree contains multiple logical tasks.
 5. Keep generated artifacts separate unless policy requires coupling.
 - If the repo versions generated output, include only artifacts caused by that group.
 
-6. Ask when ambiguous.
-- If a file belongs to two plausible groups, ask the user before staging.
+6. Decide when defensible, ask once when not.
+- Read the file's diff before treating its grouping as ambiguous.
+- If one grouping is clearly defensible, choose it and state the choice in the
+  final report so the user can veto it after the fact.
+- Treat a file as genuinely ambiguous only when it plausibly belongs to two
+  groups and the choice changes what gets published.
+- Collect every genuinely ambiguous file and ask about all of them in a single
+  question with concrete options, before staging — never one question per file.
