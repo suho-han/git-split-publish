@@ -28,8 +28,18 @@ When the user asks to split commits and publish, follow this procedure. These in
 
 4. **Propose commit groups — decide what you can, batch what you cannot.**
    - Inspect per-file diffs when boundaries are unclear (`git diff -- <path>`);
-     read the diff before asking about it.
+     read the diff before asking about it. Untracked files show nothing under
+     `git diff -- <path>` — inspect those with
+     `git diff --no-index -- /dev/null <path>` or by reading the file.
    - Group by one coherent task per commit following `references/grouping-rules.md`.
+   - Order groups so every commit builds and passes on its own: put shared new
+     symbols or helpers in their own foundational commit first (or with the
+     earliest change that needs them) so no commit references something a later
+     commit introduces.
+   - When one file's hunks belong to different groups, split them with
+     `git add -p` (or `git add -e` for contiguous hunks). If they cannot be
+     separated, commit the file once under its dominant intent and disclose the
+     rider hunk in the report.
    - For each group, provide: label, exact file list, commit message, and publish plan.
    - When one grouping is clearly defensible, choose it and state the choice in
      the report so the user can veto it after the fact.
@@ -42,7 +52,14 @@ When the user asks to split commits and publish, follow this procedure. These in
    - Stage each group's exact paths only.
    - Verify staged scope using `git diff --cached --stat`.
    - Commit with a terse, task-level message.
-   - Run minimal relevant validation (e.g., lint/test) before the first push if applicable.
+   - Run minimal relevant validation (e.g., lint/test) before the first push and
+     gate the push on it: if the change breaks validation, stop before pushing
+     and report the actual output — never push or claim success on failed or
+     unverified work. Distinguish validation that cannot run (missing deps,
+     broken harness/config — report as a caveat and fall back to the cheapest
+     sound check such as build/typecheck/syntax) from validation the change
+     breaks (a blocker). Do not stage artifacts validation creates
+     (`__pycache__/`, `.pytest_cache/`, `node_modules/`, build caches).
    - Push each commit in order:
      - If no upstream: `git push -u origin $(git branch --show-current)`
      - Else: `git push`
@@ -67,6 +84,13 @@ These hold regardless of how autonomous the run is:
 - Do not rewrite or discard user changes.
 - Do not amend, squash, or reorder existing commits unless requested.
 - Do not stage broadly (`git add -A`, `git add .`).
+- Screen every path before staging. Never stage secrets or local env files
+  (`.env`, `.env.*`, `*.pem`, `*.key`, credentials, tokens), dependency, build,
+  or cache artifacts (`node_modules/`, `__pycache__/`, `dist/`, `build/`,
+  `.venv/`, `*.log`), or large or machine-generated blobs (roughly >5 MB, or
+  anything vendored or generated). Exclude such a file from the commit and flag
+  it in the report; if a secret appears to be committed already, stop and warn.
+  Respect `.gitignore` — do not force-add ignored paths.
 - Stop before staging or committing and report concrete blockers (e.g., missing
   remote or auth) with clear next steps.
 

@@ -29,7 +29,15 @@ When the user asks to split commits and publish, follow this procedure. Operatin
 4. Group — decide what you can, batch what you cannot.
 - group by one coherent task per commit (see `references/grouping-rules.md`)
 - inspect per-file diffs when unclear (`git diff -- <path>`); read the diff
-  before asking about it
+  before asking about it — untracked files show nothing under `git diff --
+  <path>`, so inspect those with `git diff --no-index -- /dev/null <path>` or by
+  reading the file
+- order groups so every commit builds/passes on its own: put shared new
+  symbols/helpers in their own foundational commit first (or with the earliest
+  change that needs them) so no commit references something a later one adds
+- when one file's hunks belong to different groups, split with `git add -p`
+  (or `git add -e` for contiguous hunks); if inseparable, commit it once under
+  its dominant intent and disclose the rider hunk in the report
 - for each group: label, exact file list, commit message, publish plan
 - when one grouping is clearly defensible, choose it and state the choice in
   the report so the user can veto it after the fact
@@ -41,7 +49,14 @@ When the user asks to split commits and publish, follow this procedure. Operatin
 5. Commit and push one group at a time — finish the whole loop.
 - verify staged diff (`git diff --cached --stat`)
 - commit with concise message
-- run minimal relevant validation before the first push
+- run minimal relevant validation before the first push and gate the push on it:
+  if the change breaks validation, stop before pushing and report the actual
+  output — never push or claim success on failed/unverified work
+- distinguish validation that can't run (missing deps, broken harness/config —
+  report as a caveat, fall back to the cheapest sound check like
+  build/typecheck/syntax) from validation the change breaks (a blocker)
+- do not stage artifacts validation creates (`__pycache__/`, `.pytest_cache/`,
+  `node_modules/`, build caches)
 - push each commit in order
 - if no upstream: `git push -u origin $(git branch --show-current)`
 - retry transient network failures up to 4 times with exponential backoff
@@ -64,6 +79,13 @@ These hold regardless of how autonomous the run is:
 - do not discard or rewrite unstaged work
 - do not amend/squash/reorder commits unless asked
 - do not stage broadly (`git add -A`, `git add .`)
+- screen every path before staging: never stage secrets or local env files
+  (`.env`, `.env.*`, `*.pem`, `*.key`, credentials, tokens), dependency/build/
+  cache artifacts (`node_modules/`, `__pycache__/`, `dist/`, `build/`, `.venv/`,
+  `*.log`), or large/generated blobs (roughly >5 MB, or anything vendored or
+  machine-generated); exclude them from the commit, flag them in the report, and
+  if a secret looks already committed stop and warn instead of pushing; respect
+  `.gitignore` and do not force-add ignored paths
 - report blockers (missing remote/auth) with concrete next action before staging
   or committing
 

@@ -53,7 +53,17 @@ Operating stance: the publish request itself authorizes staging, committing, and
 
 - Group by one coherent task per commit, following `references/grouping-rules.md`.
 - Inspect per-file diffs with `git diff -- <path>` when a boundary is unclear;
-  read the diff before asking about it.
+  read the diff before asking about it. `git diff -- <path>` shows nothing for
+  untracked files — inspect those with `git diff --no-index -- /dev/null <path>`
+  or by reading the file directly.
+- Order groups so every commit builds and passes on its own: when several
+  changes share a new symbol or helper, give that shared code its own
+  foundational commit first (or fold it into the earliest change that needs it)
+  so no commit references something a later commit introduces.
+- When one file's hunks belong to different groups, split them with `git add -p`
+  (or `git add -e` for a contiguous hunk that patch mode refuses to split). If
+  they genuinely cannot be separated, commit the file once under its dominant
+  intent and disclose the rider hunk in the report.
 - For each group, record: label, exact file list, commit message, push/PR intent.
 - When one grouping is clearly defensible, choose it and state the choice in
   the final report so the user can veto it after the fact.
@@ -68,7 +78,14 @@ Operating stance: the publish request itself authorizes staging, committing, and
 - Verify staged scope using `git diff --cached --stat` (and `git diff --cached`
   if the stat is not enough) before committing.
 - Commit with a terse, task-level message.
-- Run minimal relevant validation before the first push.
+- Run minimal relevant validation before the first push and gate the push on it:
+  if the change breaks validation, stop before pushing and report the actual
+  output — never push or claim success on failed or unverified work.
+  Distinguish validation that cannot run (missing deps, broken harness or
+  config — report as a caveat and fall back to the cheapest sound check such as
+  build/typecheck/syntax) from validation the change breaks (a blocker). Do not
+  stage artifacts validation creates (`__pycache__/`, `.pytest_cache/`,
+  `node_modules/`, build caches).
 - Push each commit in order:
   - if no upstream: `git push -u origin $(git branch --show-current)`
   - else: `git push`
@@ -95,6 +112,13 @@ These hold regardless of how autonomous the run is:
 - Do not rewrite or discard user changes.
 - Do not amend/squash/reorder existing commits unless requested.
 - Do not stage broadly (`git add -A`, `git add .`).
+- Screen every path before staging. Never stage secrets or local env files
+  (`.env`, `.env.*`, `*.pem`, `*.key`, credentials, tokens), dependency, build,
+  or cache artifacts (`node_modules/`, `__pycache__/`, `dist/`, `build/`,
+  `.venv/`, `*.log`), or large or machine-generated blobs (roughly >5 MB, or
+  anything vendored or generated). Exclude such a file from the commit and flag
+  it in the report; if a secret appears to be committed already, stop and warn
+  instead of pushing. Respect `.gitignore` — do not force-add ignored paths.
 - Stop before staging or committing when remote/auth is missing or
   inaccessible, and report the concrete next action.
 

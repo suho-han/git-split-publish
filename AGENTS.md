@@ -64,14 +64,26 @@ The skill runs on calibrated autonomy rather than blanket confirmation:
      `git add -- <path>...`
 4. Group before staging — decide what you can, batch what you cannot:
    - one coherent task per commit
-   - inspect unclear boundaries with `git diff -- <path>` before asking
+   - inspect unclear boundaries with `git diff -- <path>` before asking;
+     untracked files show nothing there, so use
+     `git diff --no-index -- /dev/null <path>` or read the file
+   - order groups so every commit builds/passes on its own: shared new
+     symbols/helpers get their own foundational commit first (or ride with the
+     earliest change that needs them) so no commit references a later addition
+   - when one file's hunks span groups, split with `git add -p`/`git add -e`;
+     if inseparable, commit once under the dominant intent and disclose the rider
    - report label, exact files, commit message, and publish/PR intent per group
    - choose clearly defensible groupings and state the choice in the report;
      batch the genuinely ambiguous files into one question with concrete options
 5. Commit and push one group at a time — finish the whole loop:
    - verify staged scope with `git diff --cached --stat`
    - use `git diff --cached` when the stat is not enough
-   - run minimal relevant validation before the first push
+   - run minimal relevant validation before the first push and gate the push on
+     it: if the change breaks validation, stop and report the actual output;
+     distinguish validation that cannot run (missing deps/broken harness —
+     caveat, fall back to build/typecheck/syntax) from validation the change
+     breaks (blocker); do not stage artifacts validation creates (`__pycache__/`,
+     `.pytest_cache/`, `node_modules/`, build caches)
    - push in order; if no upstream, use `git push -u origin $(git branch --show-current)`
    - retry transient network failures up to 4 times with exponential backoff
      (2s, 4s, 8s, 16s); auth/permission failures are blockers, not retries
@@ -90,6 +102,12 @@ The skill runs on calibrated autonomy rather than blanket confirmation:
 - Separate tooling/config from runtime/product changes when possible.
 - Keep tests with the behavior they verify.
 - Keep generated artifacts separate unless repo policy requires coupling.
+- Keep history bisectable: each commit should build/pass on its own, and shared
+  new symbols belong in a foundational commit ordered before their dependents.
+- When a single file's hunks span groups, split with `git add -p`/`git add -e`,
+  or commit once under the dominant intent and disclose the rider.
+- Never fold in secrets, env files, dependency/build/cache artifacts, or large
+  generated blobs; exclude and flag them instead.
 - Decide clearly defensible groupings and state the choice in the report; ask
   only about files that plausibly belong to two groups where the choice
   changes what gets published, batched into a single question before staging.
@@ -99,6 +117,12 @@ The skill runs on calibrated autonomy rather than blanket confirmation:
 - Do not silently include unrelated files.
 - Do not discard, rewrite, amend, squash, or reorder user work unless requested.
 - Do not stage broadly (`git add -A`, `git add .`).
+- Do not stage secrets or local env files (`.env`, `.env.*`, `*.pem`, `*.key`,
+  credentials, tokens), dependency/build/cache artifacts (`node_modules/`,
+  `__pycache__/`, `dist/`, `build/`, `.venv/`, `*.log`), or large/generated
+  blobs (roughly >5 MB, or anything vendored or machine-generated); exclude and
+  flag them, and if a secret looks already committed, stop and warn. Respect
+  `.gitignore` and do not force-add ignored paths.
 - Do not re-ask scope the request already decided, and do not ask open-ended
   "shall I proceed?" questions.
 - Do not claim success for anything unverified.
