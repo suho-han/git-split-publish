@@ -1,7 +1,7 @@
 ---
 name: git-split-publish
 description: Inspect a mixed git worktree, split pending changes into task-based commits, push each commit in order, and open a draft PR only when explicitly requested. Acts on what the request already decides, asks once with concrete options about what it leaves genuinely open, and leads every report with the outcome.
-version: 0.2.0
+version: 0.1.1
 author: suhohan
 homepage: https://github.com/suho-han/git-split-publish
 tags:

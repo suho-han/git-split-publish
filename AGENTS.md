@@ -26,7 +26,7 @@ The skill runs on calibrated autonomy rather than blanket confirmation:
 | File | Purpose |
 |------|---------|
 | `README.md` | Package index, install paths, trigger phrases. |
-| `SKILL.md` | Codex skill entry; version `0.2.0`, author `suhohan`, homepage `https://github.com/suho-han/git-split-publish`. |
+| `SKILL.md` | Codex skill entry; version `0.1.1`, author `suhohan`, homepage `https://github.com/suho-han/git-split-publish`. |
 | `CLAUDE.md` | Claude-facing copy of the workflow. |
 | `GEMINI.md` | Gemini-facing copy; references grouping rules. |
 | `references/grouping-rules.md` | Commit boundary policy. |
