@@ -75,6 +75,7 @@ When handling split-commit publish tasks, follow:
 - `GEMINI.md`: Gemini instruction block
 - `AGENTS.md`: repository knowledge base (workflow summary, grouping rules, release policy)
 - `references/grouping-rules.md`: commit grouping rubric
+- `LICENSE`: MIT license
 
 ## Trigger Phrases
 

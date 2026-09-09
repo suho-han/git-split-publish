@@ -4,6 +4,7 @@ description: Inspect a mixed git worktree, split pending changes into task-based
 version: 0.1.1
 author: suhohan
 homepage: https://github.com/suho-han/git-split-publish
+license: MIT
 tags:
   - git
   - workflow
