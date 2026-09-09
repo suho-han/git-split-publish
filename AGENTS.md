@@ -26,7 +26,7 @@ The skill runs on calibrated autonomy rather than blanket confirmation:
 | File | Purpose |
 |------|---------|
 | `README.md` | Package index, install paths, trigger phrases. |
-| `SKILL.md` | Agent skill entry for all skill-compatible agents; version `0.1.1`, author `suhohan`, homepage `https://github.com/suho-han/git-split-publish`. |
+| `SKILL.md` | Agent skill entry for all skill-compatible agents; version `0.1.2`, author `suhohan`, homepage `https://github.com/suho-han/git-split-publish`. |
 | `CLAUDE.md` | Claude-facing copy of the core workflow. |
 | `GEMINI.md` | Gemini-facing copy of the core workflow; references grouping rules. |
 | `references/workflow.md` | Full step-by-step publish workflow referenced by `SKILL.md`, `CLAUDE.md`, and `GEMINI.md`. |
