@@ -26,14 +26,18 @@ The skill runs on calibrated autonomy rather than blanket confirmation:
 | File | Purpose |
 |------|---------|
 | `README.md` | Package index, install paths, trigger phrases. |
-| `SKILL.md` | Codex skill entry; version `0.1.1`, author `suhohan`, homepage `https://github.com/suho-han/git-split-publish`. |
-| `CLAUDE.md` | Claude-facing copy of the workflow. |
-| `GEMINI.md` | Gemini-facing copy; references grouping rules. |
+| `SKILL.md` | Agent skill entry for all skill-compatible agents; version `0.1.1`, author `suhohan`, homepage `https://github.com/suho-han/git-split-publish`. |
+| `CLAUDE.md` | Claude-facing copy of the core workflow. |
+| `GEMINI.md` | Gemini-facing copy of the core workflow; references grouping rules. |
+| `references/workflow.md` | Full step-by-step publish workflow referenced by `SKILL.md`, `CLAUDE.md`, and `GEMINI.md`. |
 | `references/grouping-rules.md` | Commit boundary policy. |
 | `.github/FUNDING.yml` | Sponsorship metadata only. |
 
 ## Installation / Triggers
 
+- Smithery (preferred, all skill-compatible agents):
+  `npx skills add suho-han/git-split-publish` — registry page:
+  `https://smithery.ai/skills/suho-han/git-split-publish`.
 - Codex skill path: `~/.codex/skills/git-split-publish`.
 - Claude: reference `CLAUDE.md` from a project instruction file.
 - Gemini: reference or copy/symlink `GEMINI.md`.
@@ -153,6 +157,10 @@ include:
 
 ## Notes
 
-- Remote: `origin` -> `https://github.com/suho-han/git-split-publish.git`.
-- Release work means keeping `SKILL.md`, `CLAUDE.md`, `GEMINI.md`, and
-  `references/grouping-rules.md` semantically aligned.
+- Remote: `origin` -> `git@github.com:suho-han/git-split-publish.git`.
+- Smithery indexes this repository's default branch; changes reach the
+  `https://smithery.ai/skills/suho-han/git-split-publish` listing on push to
+  `main`.
+- Release work means keeping `SKILL.md`, `CLAUDE.md`, `GEMINI.md`,
+  `references/workflow.md`, and `references/grouping-rules.md` semantically
+  aligned.

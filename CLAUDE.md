@@ -1,81 +1,43 @@
 # Git Split Publish Skill (Claude)
 
-When the user asks to split commits and publish, follow this procedure. Operating stance: the publish request itself authorizes staging, committing, and pushing what it covers — act on what the request already decides, ask once (batched, with concrete options) about what it leaves genuinely open, finish the whole loop, and lead the report with the outcome.
+When the user asks to split commits and publish, follow this core loop.
+Operating stance: the publish request itself authorizes staging, committing,
+and pushing what it covers — act on what the request already decides, ask once
+(batched, with concrete options) about what it leaves genuinely open, finish
+the whole loop, and lead the report with the outcome.
 
-## Procedure
+The full step-by-step procedure lives in `references/workflow.md`; the
+commit-boundary rubric lives in `references/grouping-rules.md`.
 
-1. Inspect git state — evidence before any state change.
-- `git status -sb`
-- `git diff --stat`
-- `git branch --show-current`
-- `git remote -v`
-- if publish may happen: `git status --porcelain=v2 --branch`
-- before staging/committing for publish: verify `git remote get-url origin`
-  and `git ls-remote origin`; if either fails, stop before staging or
-  committing and report the blocker with the concrete next action
-- if the worktree is clean, report there is nothing to publish and stop
+## Core Loop
 
-2. Read repository constraints.
-- read `AGENTS.md` (if present)
-- read branch/release/testing docs relevant to changed files
-
-3. Determine scope from the request — do not re-ask what the user already decided.
-- if the request covers the whole worktree ("split all my changes and push"),
-  that is the scope; proceed without asking for confirmation
-- if the request names specific work, publish only that, leave unrelated
-  changes untouched, and report exactly what was left out
-- never default to `git add -A`; use explicit path staging only
-
-4. Group — decide what you can, batch what you cannot.
-- group by one coherent task per commit (see `references/grouping-rules.md`)
-- inspect per-file diffs when unclear (`git diff -- <path>`); read the diff
-  before asking about it — untracked files show nothing under `git diff --
-  <path>`, so inspect those with `git diff --no-index -- /dev/null <path>` or by
-  reading the file
-- order groups so every commit builds/passes on its own: put shared new
-  symbols/helpers in their own foundational commit first (or with the earliest
-  change that needs them) so no commit references something a later one adds
-- when one file's hunks belong to different groups, split with `git add -p`
-  (or `git add -e` for contiguous hunks); if inseparable, commit it once under
-  its dominant intent and disclose the rider hunk in the report
-- for each group: label, exact file list, commit message, publish plan
-- when one grouping is clearly defensible, choose it and state the choice in
-  the report so the user can veto it after the fact
-- collect the genuinely ambiguous files — ones that plausibly belong to two
-  groups where the choice changes what gets published — and ask about all of
-  them in one question with concrete options; never confirm group-by-group,
-  never ask an open-ended "shall I proceed?"
-
-5. Commit and push one group at a time — finish the whole loop.
-- verify staged diff (`git diff --cached --stat`)
-- commit with concise message
-- validate before pushing and gate the push on the result: if the change breaks
-  validation, stop before pushing and report the actual output — never push or
-  claim success on failed/unverified work
-- a single validation before the first push only smoke-tests the combined
-  worktree (later groups are still present as uncommitted work), so it does not
-  prove any one commit builds on its own; when history must stay bisectable and
-  commits are interdependent, validate the at-risk commit in isolation before
-  pushing it — build its committed tree (`git archive <commit>` into a temp dir)
-  or park the later groups (`git stash -u`) so the check sees only that commit
-- distinguish validation that can't run (missing deps, broken harness/config —
-  report as a caveat, fall back to the cheapest sound check like
-  build/typecheck/syntax) from validation the change breaks (a blocker)
-- do not stage artifacts validation creates (`__pycache__/`, `.pytest_cache/`,
-  `node_modules/`, build caches)
-- push each commit in order
-- if no upstream: `git push -u origin $(git branch --show-current)`
-- retry transient network failures up to 4 times with exponential backoff
-  (2s, 4s, 8s, 16s); auth/permission failures are blockers to report, not
-  failures to retry
-- never create a local commit for a publish request after remote/auth has
-  already failed; report the blocker instead
-- do not stop after the first group; if a group fails mid-loop, report which
-  commits were pushed and which were not
-
-6. PR handling.
-- do not auto-create PR
-- create draft PR only when user explicitly requests it
+1. **Inspect git state** — evidence before any state change: `git status -sb`,
+   `git diff --stat`, `git branch --show-current`, `git remote -v`. Before
+   staging or committing for a publish request, `git remote get-url origin`
+   and `git ls-remote origin` must succeed; if either fails, stop before
+   staging or committing and report the blocker with the concrete next action.
+   If the worktree is clean, report there is nothing to publish and stop.
+2. **Read repository constraints** — root `AGENTS.md` if present, plus local
+   branch/release/testing docs relevant to the changed files.
+3. **Scope from the request** — do not re-ask what the user already decided.
+   A whole-worktree request ("split all my changes and push") sets the scope; a
+   request naming specific work publishes only that and reports what was left
+   out. Never default to `git add -A`; use explicit path staging only.
+4. **Group before staging** — one coherent task per commit; order groups so
+   every commit builds/passes on its own; split cross-group hunks with
+   `git add -p`/`git add -e` or commit once under the dominant intent and
+   disclose the rider. Choose clearly defensible groupings and state the choice
+   in the report; collect genuinely ambiguous files and ask about all of them
+   in one question with concrete options — never group-by-group, never an
+   open-ended "shall I proceed?".
+5. **Commit and push one group at a time** — verify staged scope
+   (`git diff --cached --stat`), validate before pushing and gate the push on
+   the result, push each commit in order, retry transient network failures up
+   to 4 times with exponential backoff (2s, 4s, 8s, 16s; auth/permission
+   failures are blockers, not retries), and never stop after the first group —
+   report which commits were pushed and which were not on a mid-loop failure.
+6. **PR handling** — do not auto-create PRs; create a draft PR only when the
+   user explicitly requests it (and the branch is not the default branch).
 
 ## Safety Rules
 
