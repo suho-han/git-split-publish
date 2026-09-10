@@ -1,9 +1,8 @@
 # Full Publish Workflow
 
-Detailed procedure for the split-publish loop. `SKILL.md` and the agent copies
-(`CLAUDE.md`, `GEMINI.md`) carry the core loop and guardrails; this file holds
-the full step-by-step detail. The commit-boundary rubric lives in
-`references/grouping-rules.md`.
+Detailed procedure for the split-publish loop. `SKILL.md` carries the core
+loop and guardrails; this file holds the full step-by-step detail. The
+commit-boundary rubric lives in `references/grouping-rules.md`.
 
 ## 1. Inspect repository state first — evidence before any state change
 
