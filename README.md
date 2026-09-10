@@ -27,54 +27,18 @@ smithery skill add suho-han/git-split-publish --agent claude-code
 Per-platform commands are also shown on the
 [Smithery skill page](https://smithery.ai/skills/suho-han/git-split-publish).
 
-## Manual Installation
-
-### Codex
-
-Install from this repository using your Codex skill installer flow, or clone
-and place under:
-
-- `~/.codex/skills/git-split-publish`
-
-### Claude
-
-Reference `CLAUDE.md` from your project-level instruction file (for example
-`AGENTS.md`).
-
-Example:
-
-```md
-When handling split-commit publish tasks, follow:
-`<repo-root>/CLAUDE.md`
-```
-
-### Gemini
-
-**Global Installation (Everywhere)**
-Add a reference to this repository's `GEMINI.md` in your global
-`~/.gemini/gemini.md` file:
-
-```md
-# Git Split Publish Skill
---- Context from: /absolute/path/to/git-split-publish/GEMINI.md ---
-```
-
-**Local Installation (Specific Project)**
-Copy or symlink `GEMINI.md` to your project root, or include it in your
-project's `GEMINI.md`:
-
-```md
-When handling split-commit publish tasks, follow:
-`./GEMINI.md`
-```
+Prefer a manual setup? Copy or clone this repository into your agent's skills
+directory (for example `~/.claude/skills/git-split-publish`,
+`~/.codex/skills/git-split-publish`, or the universal
+`~/.agents/skills/git-split-publish`).
 
 ## Files
 
 - `SKILL.md`: agent skill entry for all skill-compatible agents
-- `CLAUDE.md`: Claude instruction block
-- `GEMINI.md`: Gemini instruction block
 - `AGENTS.md`: repository knowledge base (workflow summary, grouping rules, release policy)
+- `references/workflow.md`: full step-by-step publish workflow
 - `references/grouping-rules.md`: commit grouping rubric
+- `LICENSE`: MIT license
 
 ## Trigger Phrases
 

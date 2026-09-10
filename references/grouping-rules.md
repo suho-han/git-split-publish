@@ -33,7 +33,9 @@ Use these rules when a worktree contains multiple logical tasks.
 - One file can carry changes for two intents (for example a manifest that adds a
   runtime dependency for a feature and a test script for tooling).
 - Separate them with `git add -p` (or `git add -e` for contiguous hunks that
-  patch mode refuses to split). If they truly cannot be separated, commit the
+  patch mode refuses to split). In a non-interactive session, write a patch
+  trimmed to one group's hunks and stage it with `git apply --cached <patch>`
+  instead of patch mode. If they truly cannot be separated, commit the
   file once under its dominant intent and disclose the rider hunk in the report.
 
 8. Never fold in secrets, junk, or bulk.
