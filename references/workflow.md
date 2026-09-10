@@ -43,9 +43,12 @@ commit-boundary rubric lives in `references/grouping-rules.md`.
   foundational commit first (or fold it into the earliest change that needs it)
   so no commit references something a later commit introduces.
 - When one file's hunks belong to different groups, split them with `git add -p`
-  (or `git add -e` for a contiguous hunk that patch mode refuses to split). If
-  they genuinely cannot be separated, commit the file once under its dominant
-  intent and disclose the rider hunk in the report.
+  (or `git add -e` for a contiguous hunk that patch mode refuses to split).
+  Agents run non-interactive sessions where patch mode's prompts are
+  unavailable: instead, write a patch containing only the current group's
+  hunks and stage it with `git apply --cached <patch>`.
+- If the hunks genuinely cannot be separated, commit the file once under its
+  dominant intent and disclose the rider hunk in the report.
 - For each group, record: label, exact file list, commit message, push/PR intent.
 - When one grouping is clearly defensible, choose it and state the choice in
   the final report so the user can veto it after the fact.
