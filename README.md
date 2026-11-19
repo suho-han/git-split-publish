@@ -3,34 +3,60 @@
 Portable `git-split-publish` skill package for Codex, Claude, Gemini, and other
 skill-compatible agents.
 
-## Install (Smithery)
+## Install
 
-This skill is listed on the Smithery Skills Registry:
+Git and your chosen agent must already be installed. Run the commands below
+in your terminal to install for your user account. Clone the whole repository
+so `SKILL.md` and `references/` stay together.
 
-- <https://smithery.ai/skills/suho-han/git-split-publish>
-
-Install with the Skills CLI — it detects your agents and installs for all of
-them (Claude Code, Cursor, Codex, Windsurf, Cline, Goose, Gemini CLI, and
-more):
+### Codex
 
 ```bash
-npx skills add suho-han/git-split-publish
+mkdir -p ~/.agents/skills
+git clone https://github.com/suho-han/git-split-publish.git ~/.agents/skills/git-split-publish
 ```
 
-Or install for a specific agent with the Smithery CLI:
+Start a new Codex session and invoke `$git-split-publish`, or use one of the
+trigger phrases below.
+See the [Codex skills documentation](https://developers.openai.com/codex/skills).
+
+### Claude Code
 
 ```bash
-npm install -g smithery
-smithery skill add suho-han/git-split-publish --agent claude-code
+mkdir -p ~/.claude/skills
+git clone https://github.com/suho-han/git-split-publish.git ~/.claude/skills/git-split-publish
 ```
 
-Per-platform commands are also shown on the
-[Smithery skill page](https://smithery.ai/skills/suho-han/git-split-publish).
+Start a new Claude Code session and invoke `/git-split-publish`, or use one
+of the trigger phrases below.
+See the [Claude Code skills documentation](https://code.claude.com/docs/en/skills).
 
-Prefer a manual setup? Copy or clone this repository into your agent's skills
-directory (for example `~/.claude/skills/git-split-publish`,
-`~/.codex/skills/git-split-publish`, or the universal
-`~/.agents/skills/git-split-publish`).
+### Gemini CLI
+
+```bash
+mkdir -p ~/.gemini/skills
+git clone https://github.com/suho-han/git-split-publish.git ~/.gemini/skills/git-split-publish
+```
+
+Run `/skills reload`, then `/skills list` in Gemini CLI to check that
+`git-split-publish` is available. Use one of the trigger phrases below.
+See the [Gemini CLI skills documentation](https://geminicli.com/docs/cli/skills/).
+
+### Other skill-compatible agents
+
+Copy or clone the whole repository into the skills directory documented by
+your agent, with `SKILL.md` directly inside `git-split-publish/`.
+
+### Update an existing installation
+
+If the destination already exists, update its clone instead of cloning again.
+Use the path for your agent, for example:
+
+```bash
+git -C ~/.agents/skills/git-split-publish pull --ff-only
+```
+
+Start a new agent session or reload its skills after updating.
 
 ## Files
 

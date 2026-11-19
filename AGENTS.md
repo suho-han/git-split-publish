@@ -33,13 +33,12 @@ The skill runs on calibrated autonomy rather than blanket confirmation:
 
 ## Installation / Triggers
 
-- Smithery (preferred, all skill-compatible agents):
-  `npx skills add suho-han/git-split-publish` — registry page:
-  `https://smithery.ai/skills/suho-han/git-split-publish`.
-- Manual fallback: clone/copy this repository into the agent's skills
-  directory (e.g. `~/.codex/skills/git-split-publish`,
-  `~/.claude/skills/git-split-publish`, or the universal
-  `~/.agents/skills/git-split-publish`).
+- Install directly from this repository using the agent-specific commands in
+  `README.md`; no registry CLI is required.
+- User skill directories: Codex `~/.agents/skills/git-split-publish`,
+  Claude Code `~/.claude/skills/git-split-publish`, and Gemini CLI
+  `~/.gemini/skills/git-split-publish`.
+- Keep `SKILL.md` and `references/` together when installing or copying.
 - Trigger phrases: "split publish", "split changes by job and push",
   "group pending changes into separate commits and publish".
 
@@ -157,8 +156,5 @@ include:
 ## Notes
 
 - Remote: `origin` -> `git@github.com:suho-han/git-split-publish.git`.
-- Smithery indexes this repository's default branch; changes reach the
-  `https://smithery.ai/skills/suho-han/git-split-publish` listing on push to
-  `main`.
 - Release work means keeping `SKILL.md`, `references/workflow.md`, and
   `references/grouping-rules.md` semantically aligned.
